@@ -14,22 +14,19 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+    <repositories>
+        <repository>
+            <id>localRepo</id>
+            <url>file://${basedir}/lib</url>
+        </repository>
+    </repositories>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-    	<groupId>com.netapp</groupId>
-    	<artifactId>ontap</artifactId>
-    	<version>8.2</version>
-    </dependency>
-    <dependency>
-    	<groupId>com.netapp</groupId>
-    	<artifactId>nmsdk-runtime</artifactId>
-    	<version>5.2</version>
     </dependency>
     <dependency>
     	<groupId>commons-io</groupId>
@@ -45,6 +42,26 @@
     	<groupId>commons-lang</groupId>
     	<artifactId>commons-lang</artifactId>
     	<version>2.6</version>
-    </dependency>
+    </dependency> 
+        <dependency>
+            <groupId>com.netapp</groupId>
+            <artifactId>ontap</artifactId>
+            <version>8.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netapp</groupId>
+            <artifactId>nmsdk-runtime</artifactId>
+            <version>5.2</version>
+        </dependency>    
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.7.9</version>
+        </dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.7</version>
+		</dependency>                
   </dependencies>
 </project>
