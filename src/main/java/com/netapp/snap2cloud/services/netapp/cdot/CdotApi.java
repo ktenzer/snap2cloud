@@ -73,7 +73,7 @@ public class CdotApi {
     public void cloneVolumeFromSnapshot(String volume, String snapshot, String clone) throws Exception {
         LOGGER.info("NetApp volume clone " + clone + " of parent volume " + volume + " using snapshot" + snapshot);
         try {
-            String junctionPath = "/" + volume;
+            String junctionPath = "/" + clone;
             VolumeCloneCreateRequest volumeClone = new VolumeCloneCreateRequest();
             volumeClone.withVolume(clone).withParentSnapshot(snapshot).withJunctionActive(true).withJunctionPath(junctionPath).withParentVolume(volume);
 

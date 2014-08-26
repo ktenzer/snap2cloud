@@ -9,41 +9,36 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.transfer.TransferManager;
 
 public class AwsConn {
-    private String accessKey;
-    private String secretKey;
 
-    public AwsConn(String accessKey, String secretKey) {
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
+    public AwsConn() {
+        
     }
 
-    public TransferManager getS3TransferManager() throws AmazonClientException {
+    public TransferManager getS3TransferManager(AWSCredentials credentials) throws AmazonClientException {
         TransferManager tm = null;
 
         try {
-            AWSCredentials credentials = getAwsCredentials();
             tm = new TransferManager(credentials);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new AmazonClientException(e.getMessage(), e);
         }
 
         return tm;
     }
 
-    public AmazonS3Client getS3Client() throws AmazonClientException {
+    public AmazonS3Client getS3Client(AWSCredentials credentials) throws AmazonClientException {
         AmazonS3Client s3 = null;
 
         try {
-            AWSCredentials credentials = getAwsCredentials();
             s3 = new AmazonS3Client(credentials);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new AmazonClientException(e.getMessage(), e);
         }
 
         return s3;
     }
     
-    private AWSCredentials getAwsCredentials() throws IOException {
+    public AWSCredentials getAwsCredentials(String accessKey, String secretKey) throws IOException {
         return new BasicAWSCredentials(accessKey, secretKey);
     }
 }
