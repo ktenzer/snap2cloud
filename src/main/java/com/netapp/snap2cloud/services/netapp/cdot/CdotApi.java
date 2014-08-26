@@ -116,30 +116,36 @@ public class CdotApi {
         LOGGER.info("NetApp volume delete of volume " + volume + " completed successfully");
     }
     
-    public void exportVolume(String svm, String containerName, String policyName, String hostName, String permission)
+    public void exportVolume(String svm, String volume, String policy, String host, String permission)
             throws Exception {
 
+        LOGGER.info("NetApp volume export of volume " + volume + " using policy " + policy + " to host " + host + " with permission " + permission);
         try {
-            if (!this.isPolicy(svm, policyName)) {
-                this.createPolicy(svm, policyName);
+            if (!this.isPolicy(svm, policy)) {
+                this.createPolicy(svm, policy);
             }
         } catch (Exception e) {
+            LOGGER.error("NetApp policy check for poliy " + policy + " failed");
             throw new Exception(e.getMessage(), e);
         }
         
         try {
-            if (!this.isRule(svm, policyName, hostName)) {
-                this.createRule(svm, policyName, hostName, permission);
+            if (!this.isRule(svm, policy, host)) {
+                this.createRule(svm, policy, host, permission);
             }
         } catch (Exception e) {
+            LOGGER.error("NetApp policy check for rule in policy " + policy + " failed");
             throw new Exception(e.getMessage(), e);
         }
         
         try {
-            this.modifyVolume(svm, containerName, policyName);
+            this.modifyVolume(svm, volume, policy);
         } catch (Exception e) {
+            LOGGER.error("NetApp volume modify to apply policy " + policy + " failed");
             throw new Exception(e.getMessage(), e);
         }
+        
+        LOGGER.info("NetApp volume export of volume " + volume + " using policy " + policy + " to host " + host + " with permission " + permission + " completed successfully");
     }
     
     public boolean isRule(String svm, String policyName, String hostName) throws Exception {
@@ -182,13 +188,15 @@ public class CdotApi {
         return isPolicy;
     }
     
-    public boolean createRule(String svm, String policyName, String hostName, String permission) throws Exception {
+    public boolean createRule(String svm, String policy, String host, String permission) throws Exception {
 
         String rwSecurityFlavor = null;
         String roSecurityFlavor = null;
         String suSecurityFlavor = null;
         String anonUserId = "0";
 
+        LOGGER.info("NetApp rule create for policy " + policy + " to host " + host + " using permission " + permission);
+        
         if (permission.toString().equalsIgnoreCase("read_only")) {
             rwSecurityFlavor = "any";
             roSecurityFlavor = "never";
@@ -206,40 +214,48 @@ public class CdotApi {
         }
 
         try {
-            ExportRuleCreateRequest ruleCreateRequest = new ExportRuleCreateRequest().withPolicyName(policyName).withClientMatch(hostName)
+            ExportRuleCreateRequest ruleCreateRequest = new ExportRuleCreateRequest().withPolicyName(policy).withClientMatch(host)
                     .withRoRule(roSecurityFlavor).withRwRule(rwSecurityFlavor).withSuperUserSecurity(suSecurityFlavor).withAnonymousUserId(anonUserId);
             runner.run(ruleCreateRequest);
 
         } catch (Exception e) {
+            LOGGER.error("NetApp rule create for policy " + policy + " to host " + host + " using permission " + permission + " failed");
             throw new Exception(e.getMessage(), e);
         }
         
-        return true;
-    }
-    
-    public boolean createPolicy(String svm, String policyName) throws Exception {
-        try {
-            
-            ExportPolicyCreateRequest policyCreate = new ExportPolicyCreateRequest().withPolicyName(policyName);
-            runner.run(policyCreate);
-
-        } catch (Exception e) {
-            throw new Exception(e.getMessage(), e);
-        }      
+        LOGGER.info("NetApp rule create for policy " + policy + " to host " + host + " using permission " + permission + " completed successfully");
         
         return true;
     }
     
-    public boolean modifyVolume(String svm, String volumeName, String policyName) throws Exception {
+    public boolean createPolicy(String svm, String policy) throws Exception {
+        LOGGER.info("NetApp policy create for " + policy);
+        try {
+            
+            ExportPolicyCreateRequest policyCreate = new ExportPolicyCreateRequest().withPolicyName(policy);
+            runner.run(policyCreate);
+
+        } catch (Exception e) {
+            LOGGER.error("NetApp policy create for " + policy + " failed");
+            throw new Exception(e.getMessage(), e);
+        }      
+        
+        LOGGER.error("NetApp policy create for " + policy + " completed successfully");
+        
+        return true;
+    }
+    
+    public boolean modifyVolume(String svm, String volume, String policy) throws Exception {
+        LOGGER.info("NetApp volume modify for volume " + volume + " using policy " + policy);
         try {
             VolumeAttributes volumeQueryAttributes = new VolumeAttributes();
             VolumeAttributes volumeAttributes = new VolumeAttributes();
 
             VolumeIdAttributes volumeIdAttributes = new VolumeIdAttributes();
-            volumeIdAttributes.setName(volumeName);
+            volumeIdAttributes.setName(volume);
             
             VolumeExportAttributes volumeExportAttributes = new VolumeExportAttributes();
-            volumeExportAttributes.setPolicy(policyName);
+            volumeExportAttributes.setPolicy(policy);
 
             volumeQueryAttributes.setVolumeIdAttributes(volumeIdAttributes);
             volumeAttributes.setVolumeExportAttributes(volumeExportAttributes);
@@ -249,46 +265,60 @@ public class CdotApi {
             runner.run(modifyVolume);
 
         } catch (Exception e) {
+            LOGGER.error("NetApp volume modify for volume " + volume + " using policy " + policy + " failed");
             throw new Exception(e.getMessage(), e);
         }   
         
+        LOGGER.info("NetApp volume modify for volume " + volume + " using policy " + policy + " completed successfully");
         return true;
     }    
 
-    public void unmountVolume(String svm, String volumeName)
+    public void unmountVolume(String svm, String volume)
             throws Exception {
 
+        LOGGER.info("NetApp volume unmount for volume " + volume);
         try {
-            VolumeUnmountRequest volumeOfflineRequest = new VolumeUnmountRequest().withVolumeName(volumeName).withForce(true);
+            VolumeUnmountRequest volumeOfflineRequest = new VolumeUnmountRequest().withVolumeName(volume).withForce(true);
 
             runner.run(volumeOfflineRequest);
         } catch (Exception e) {
+            LOGGER.error("NetApp volume unmount for volume " + volume + " failed");
             throw new Exception(e.getMessage(), e);
         }      
+        
+        LOGGER.info("NetApp volume unmount for volume " + volume + " completed successfully");
     }
 
-    public void offlineVolume(String svm, String volumeName)
+    public void offlineVolume(String svm, String volume)
             throws Exception {
 
+        LOGGER.info("NetApp volume offline for volume " + volume);
         try {
-            VolumeOfflineRequest volumeOfflineRequest = new VolumeOfflineRequest().withName(volumeName);
+            VolumeOfflineRequest volumeOfflineRequest = new VolumeOfflineRequest().withName(volume);
 
             runner.run(volumeOfflineRequest);
         } catch (Exception e) {
+            LOGGER.error("NetApp volume offline for volume " + volume +  " failed");
             throw new Exception(e.getMessage(), e);
-        }      
+        }
+        
+        LOGGER.info("NetApp volume offline for volume " + volume + " completed successfully");
     }
     
-    public void destroyVolume(String svm, String volumeName)
+    public void destroyVolume(String svm, String volume)
             throws Exception {
 
+        LOGGER.info("NetApp volume destroy for volume " + volume);
         try {
-            VolumeDestroyRequest volumeOfflineRequest = new VolumeDestroyRequest().withName(volumeName);
+            VolumeDestroyRequest volumeOfflineRequest = new VolumeDestroyRequest().withName(volume);
 
             runner.run(volumeOfflineRequest);
         } catch (Exception e) {
+            LOGGER.error("NetApp volume unmount for volume " + volume + " failed");
             throw new Exception(e.getMessage(), e);
-        }      
+        }    
+        
+        LOGGER.info("NetApp volume unmount for volume " + volume + " completed successfully");
     }
     
     public boolean isVolumeOnline(String svm, String volumeName)
