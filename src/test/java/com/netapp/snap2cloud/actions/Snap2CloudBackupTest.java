@@ -25,8 +25,8 @@ public class Snap2CloudBackupTest {
     private String bucketName = "snap2cloud12345";
     private String mountPath = "/tmp/aws";
     private String backupName = "foobar";
-    private String accessKey = "AKIAJSHSOJLSOAKR3RXQ";
-    private String secretKey = "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";
+    private String accessKey = "";
+    private String secretKey = "";
     
     private String cliCmd1Arg1 = "mount";
     private String cliCmd1Arg2 = "10.65.58.160:/test_clone";
