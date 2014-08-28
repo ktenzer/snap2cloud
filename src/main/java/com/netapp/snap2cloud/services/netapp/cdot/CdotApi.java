@@ -71,16 +71,16 @@ public class CdotApi {
     }
     
     public void cloneVolumeFromSnapshot(String volume, String snapshot, String clone) throws Exception {
-        LOGGER.info("NetApp volume clone " + clone + " of parent volume " + volume + " using snapshot" + snapshot);
+        LOGGER.info("NetApp volume clone " + clone + " of parent volume " + volume + " using snapshot " + snapshot);
         try {
             String junctionPath = "/" + clone;
             VolumeCloneCreateRequest volumeClone = new VolumeCloneCreateRequest();
             volumeClone.withVolume(clone).withParentSnapshot(snapshot).withJunctionActive(true).withJunctionPath(junctionPath).withParentVolume(volume);
 
             runner.run(volumeClone);
-            LOGGER.info("NetApp volume clone " + clone + " of parent volume " + volume + " using snapshot" + snapshot + " completed successfully");
+            LOGGER.info("NetApp volume clone " + clone + " of parent volume " + volume + " using snapshot " + snapshot + " completed successfully");
         } catch (Exception e) {
-            LOGGER.error("NetApp volume clone " + clone + " of parent volume " + volume + " using snapshot" + snapshot + " failed");
+            LOGGER.error("NetApp volume clone " + clone + " of parent volume " + volume + " using snapshot " + snapshot + " failed");
             throw new Exception(e.getMessage(), e);
         }
     }

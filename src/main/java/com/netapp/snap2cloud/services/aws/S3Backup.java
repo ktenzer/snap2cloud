@@ -18,6 +18,7 @@ import com.amazonaws.services.s3.transfer.ObjectMetadataProvider;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
 import com.amazonaws.services.s3.transfer.model.UploadResult;
+import com.netapp.snap2cloud.os.ExecuteCommand;
 
 public class S3Backup {
     private static final Logger LOGGER = LoggerFactory.getLogger(S3Backup.class);
@@ -65,13 +66,16 @@ public class S3Backup {
 
             while (uploadDirectory.isDone() == false) {
                 Double progress = uploadDirectory.getProgress().getPercentTransferred();
-                String percent = progress.intValue() + "%";
+                String percent = progress.intValue() + "%";       
                 long xferProgress = uploadDirectory.getProgress().getBytesTransferred();
                 String xferState = uploadDirectory.getState().toString();
 
-                LOGGER.info(String.format("Upload status for " + file.getAbsolutePath() + " in S3 Bucket " + bucketName + " state: " + xferState + "percent: " + percent + "progress: " + xferProgress)); 
-            }
+                LOGGER.info("Upload status for " + file.getAbsolutePath() + " in S3 Bucket " + bucketName + " state: " + xferState + " percent: " + percent + " progress: " + xferProgress); 
 
+                ExecuteCommand cmd = new ExecuteCommand();
+                cmd.sleep(10);
+            }
+            
             this.verifyMultiPartUpload(uploadDirectory);
             
             try {

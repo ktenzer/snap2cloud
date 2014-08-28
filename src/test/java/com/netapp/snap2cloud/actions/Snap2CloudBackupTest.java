@@ -6,11 +6,14 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.amazonaws.auth.AWSCredentials;
 import com.netapp.snap2cloud.os.ExecuteCommand;
+import com.netapp.snap2cloud.services.aws.AwsConn;
+import com.netapp.snap2cloud.services.aws.S3Backup;
 import com.netapp.snap2cloud.services.netapp.cdot.CdotApi;
 import com.netapp.snap2cloud.services.netapp.cdot.NtapConnModel;
 
-public class NetAppCloneMountDeleteTest {
+public class Snap2CloudBackupTest {
     private String svm = "svm-keith";
     private String policy = "keith";
     private String host = "0.0.0.0/0";
@@ -18,11 +21,18 @@ public class NetAppCloneMountDeleteTest {
     private String volume = "test";
     private String snapshot = "test123";
     private String clone = "test_clone";
+    
+    private String bucketName = "snap2cloud12345";
+    private String mountPath = "/tmp/aws";
+    private String backupName = "foobar";
+    private String accessKey = "AKIAJSHSOJLSOAKR3RXQ";
+    private String secretKey = "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";
+    
     private String cliCmd1Arg1 = "mount";
     private String cliCmd1Arg2 = "10.65.58.160:/test_clone";
-    private String cliCmd1Arg3 = "/Users/ktenzer/mnt";
+    private String cliCmd1Arg3 = mountPath;
     private String cliCmd2Arg1 = "umount";
-    private String cliCmd2Arg2 = "/Users/ktenzer/mnt";
+    private String cliCmd2Arg2 = mountPath;
     
     @Test
     public void testExecute() {
@@ -41,7 +51,10 @@ public class NetAppCloneMountDeleteTest {
             ExecuteCommand cmd = new ExecuteCommand();
             cmd.executeCmd(cmd1Args);
             
-            cmd.sleep(20);
+            AwsConn aws = new AwsConn();
+            AWSCredentials credentials = aws.getAwsCredentials(accessKey, secretKey);
+            S3Backup s3Backup = new S3Backup(mountPath, bucketName, backupName, credentials);           
+            s3Backup.backup();
             
             List<String> cmd2Args = new ArrayList<String>();
             cmd2Args.add(cliCmd2Arg1);
