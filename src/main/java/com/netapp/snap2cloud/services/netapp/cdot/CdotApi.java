@@ -23,6 +23,7 @@ import com.netapp.nmsdk.ontap.api.volume.VolumeGetIterRequest;
 import com.netapp.nmsdk.ontap.api.volume.VolumeIdAttributes;
 import com.netapp.nmsdk.ontap.api.volume.VolumeModifyIterRequest;
 import com.netapp.nmsdk.ontap.api.volume.VolumeOfflineRequest;
+import com.netapp.nmsdk.ontap.api.volume.VolumeSnapshotAttributes;
 import com.netapp.nmsdk.ontap.api.volume.VolumeUnmountRequest;
 
 public class CdotApi {
@@ -253,6 +254,9 @@ public class CdotApi {
 
             VolumeIdAttributes volumeIdAttributes = new VolumeIdAttributes();
             volumeIdAttributes.setName(volume);
+
+            VolumeSnapshotAttributes volumeSnapshotAttributes = new VolumeSnapshotAttributes();
+            volumeSnapshotAttributes.setSnapdirAccessEnabled(false);
             
             VolumeExportAttributes volumeExportAttributes = new VolumeExportAttributes();
             volumeExportAttributes.setPolicy(policy);
@@ -260,6 +264,7 @@ public class CdotApi {
             volumeQueryAttributes.setVolumeIdAttributes(volumeIdAttributes);
             volumeAttributes.setVolumeExportAttributes(volumeExportAttributes);
             volumeAttributes.setVolumeIdAttributes(volumeIdAttributes);
+            volumeAttributes.setVolumeSnapshotAttributes(volumeSnapshotAttributes);
             
             VolumeModifyIterRequest modifyVolume = new VolumeModifyIterRequest().withQuery(volumeQueryAttributes).withAttributes(volumeAttributes);
             runner.run(modifyVolume);

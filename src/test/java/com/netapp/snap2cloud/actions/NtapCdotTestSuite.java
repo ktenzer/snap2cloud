@@ -4,9 +4,9 @@ import com.netapp.snap2cloud.services.netapp.cdot.NtapConnModel;
 
 public class NtapCdotTestSuite {
     public String SVM = "svm-keith";
-    private String HOSTNAME = "steve.muccbc.hq.netapp.com";
+    private String HOSTNAME = "10.65.58.160";
     private Integer PORT = 80;
-    private String USERNAME = "admin";
+    private String USERNAME = "vsadmin";
     private String PASSWORD = "netapp01";
     private boolean secure = false;
     

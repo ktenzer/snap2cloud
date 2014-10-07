@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.transfer.TransferManager;
 
@@ -40,5 +41,10 @@ public class AwsConn {
     
     public AWSCredentials getAwsCredentials(String accessKey, String secretKey) throws IOException {
         return new BasicAWSCredentials(accessKey, secretKey);
+    }
+    
+    public AWSCredentials getAwsCredentialsFromEnvironment() throws IOException {
+        EnvironmentVariableCredentialsProvider credentials = new EnvironmentVariableCredentialsProvider();
+        return credentials.getCredentials();
     }
 }

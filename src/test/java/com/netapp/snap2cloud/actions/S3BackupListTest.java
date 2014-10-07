@@ -5,22 +5,19 @@ import org.junit.Test;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.netapp.snap2cloud.services.aws.AwsConn;
-import com.netapp.snap2cloud.services.aws.S3Backup;
+import com.netapp.snap2cloud.services.aws.S3BackupList;
 
 
-public class S3BackupTest {
+public class S3BackupListTest {
     private String bucketName = "snap2cloud12345";
-    private String mountPath = "/tmp/aws";
-    private String backupName = "foobar";
 
     @Test
     public void testExecute() {
         try {
             AwsConn aws = new AwsConn();
             AWSCredentials credentials = aws.getAwsCredentialsFromEnvironment();
-            S3Backup s3Backup = new S3Backup(mountPath, bucketName, backupName, false, credentials);
-            
-            s3Backup.backup();           
+            S3BackupList s3BackupList = new S3BackupList(bucketName, credentials);
+            s3BackupList.backupList();
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();

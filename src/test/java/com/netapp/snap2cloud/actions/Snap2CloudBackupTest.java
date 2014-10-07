@@ -25,8 +25,6 @@ public class Snap2CloudBackupTest {
     private String bucketName = "snap2cloud12345";
     private String mountPath = "/tmp/aws";
     private String backupName = "foobar";
-    private String accessKey = "AKIAJSHSOJLSOAKR3RXQ";
-    private String secretKey = "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";
     
     private String cliCmd1Arg1 = "mount";
     private String cliCmd1Arg2 = "10.65.58.160:/test_clone";
@@ -52,8 +50,8 @@ public class Snap2CloudBackupTest {
             cmd.executeCmd(cmd1Args);
             
             AwsConn aws = new AwsConn();
-            AWSCredentials credentials = aws.getAwsCredentials(accessKey, secretKey);
-            S3Backup s3Backup = new S3Backup(mountPath, bucketName, backupName, credentials);           
+            AWSCredentials credentials = aws.getAwsCredentialsFromEnvironment();
+            S3Backup s3Backup = new S3Backup(mountPath, bucketName, backupName, false, credentials);           
             s3Backup.backup();
             
             List<String> cmd2Args = new ArrayList<String>();

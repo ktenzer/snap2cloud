@@ -19,6 +19,7 @@ import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
 import com.amazonaws.services.s3.transfer.model.UploadResult;
 import com.netapp.snap2cloud.os.ExecuteCommand;
+import com.netapp.snap2cloud.os.Util;
 
 public class S3Backup {
     private static final Logger LOGGER = LoggerFactory.getLogger(S3Backup.class);
@@ -26,13 +27,15 @@ public class S3Backup {
     private String mountPath;
     private String bucketName;
     private String backupName;
+    private boolean isBackupTimestamp;
     AWSCredentials credentials;
     Long timestamp;
 
-    public S3Backup(String mountPath, String bucketName, String backupName, AWSCredentials credentials) {
+    public S3Backup(String mountPath, String bucketName, String backupName, boolean isBackupTimestamp, AWSCredentials credentials) {
         this.mountPath = mountPath;
         this.bucketName = bucketName;
         this.backupName = backupName;
+        this.isBackupTimestamp = isBackupTimestamp;
         this.credentials = credentials;
         timestamp = System.currentTimeMillis();
     }
@@ -41,6 +44,13 @@ public class S3Backup {
         AwsConn aws = new AwsConn();
         TransferManager tm = aws.getS3TransferManager(credentials);
         S3Util s3Util = new S3Util(credentials);
+        
+        if (isBackupTimestamp) {
+            Util util = new Util();
+            String date = util.getDateFormatFromEpoch(System.currentTimeMillis());
+            backupName = backupName + "_" + date;
+        }
+        
         ObjectMetadata metadata = s3Util.getMetadata(backupName, timestamp, mountPath);
 
         try {
@@ -129,7 +139,7 @@ public class S3Backup {
                 }
 
                 if (uploadResult != null) {
-                    LOGGER.debug(String.format("Multipart upload success for file " + uploadResult.getKey() + " to Amazon S3 bucket " + uploadResult.getBucketName()));
+                    LOGGER.info(String.format("Multipart upload success for file " + uploadResult.getKey() + " to Amazon S3 bucket " + uploadResult.getBucketName()));
                 }
             }
             
