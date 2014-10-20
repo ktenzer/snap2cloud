@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -16,8 +13,6 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.netapp.snap2cloud.model.S3BackupModel;
 
 public class S3BackupList {
-    private static final Logger LOGGER = LoggerFactory.getLogger(S3BackupList.class);
-
     private String bucketName;
     AWSCredentials credentials;
     Long timestamp;

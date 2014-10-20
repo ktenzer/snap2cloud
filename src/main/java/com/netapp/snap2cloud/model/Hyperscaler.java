@@ -4,6 +4,7 @@ public class Hyperscaler {
 
     private String s3BucketName;
     private boolean backupTimestamp;
+    private int retention;
     
     public String getS3BucketName() {
         return s3BucketName;
@@ -19,5 +20,13 @@ public class Hyperscaler {
 
     public void setBackupTimestamp(boolean backupTimestamp) {
         this.backupTimestamp = backupTimestamp;
+    }
+
+    public int getRetention() {
+        return retention;
+    }
+
+    public void setRetention(int retention) {
+        this.retention = retention;
     }
 }

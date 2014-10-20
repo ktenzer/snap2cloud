@@ -11,6 +11,7 @@ import org.apache.commons.cli.PosixParser;
 import com.netapp.snap2cloud.actions.Backup;
 import com.netapp.snap2cloud.actions.BackupList;
 import com.netapp.snap2cloud.actions.Cleanup;
+import com.netapp.snap2cloud.actions.DeleteBackup;
 import com.netapp.snap2cloud.model.Host;
 import com.netapp.snap2cloud.model.Hyperscaler;
 import com.netapp.snap2cloud.model.Storage;
@@ -80,11 +81,25 @@ public class Snap2CloudCli {
                 }
             } else if(commandLine.getOptionValue("action").equals("list")) {
                 try {
-                    BackupList backupList = new BackupList(ntapConn, storage, host, hyperscaler);
+                    BackupList backupList = new BackupList(hyperscaler);
                     backupList.list();
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
-                }                
+                }       
+            } else if(commandLine.getOptionValue("action").equals("deleteBackup")) {
+                try {
+                    DeleteBackup deleteBackup = new DeleteBackup(storage, hyperscaler);
+                    deleteBackup.deleteBackup();
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
+            } else if(commandLine.getOptionValue("action").equals("deleteOnRetention")) {
+                try {
+                    DeleteBackup deleteBackup = new DeleteBackup(storage, hyperscaler);
+                    deleteBackup.deleteOnRetention();
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }                   
             } else {
                 System.err.println("Invalid action");
             }

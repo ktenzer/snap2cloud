@@ -60,7 +60,6 @@ public class S3Backup {
         }
 
         File file = new File(mountPath);
-        String backupPath = backupName + file.getAbsolutePath();
 
         LOGGER.info("Uploading directory " + file.getAbsolutePath() +" to Amazon S3 bucket " + bucketName +" in " + mountPath);
         try {
@@ -72,7 +71,7 @@ public class S3Backup {
                 }
             };
 
-            MultipleFileUpload uploadDirectory = tm.uploadDirectory(bucketName, backupPath, file, true, metadataProvider);
+            MultipleFileUpload uploadDirectory = tm.uploadDirectory(bucketName, backupName, file, true, metadataProvider);
 
             while (uploadDirectory.isDone() == false) {
                 Double progress = uploadDirectory.getProgress().getPercentTransferred();

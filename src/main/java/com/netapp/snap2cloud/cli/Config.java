@@ -60,6 +60,7 @@ public class Config {
         Hyperscaler hyperscalerModel = new Hyperscaler();
         hyperscalerModel.setS3BucketName(configMap.get("HYPERSCALER_BUCKET_NAME"));
         hyperscalerModel.setBackupTimestamp(Boolean.valueOf(configMap.get("HYPERSCALER_BACKUP_TIMESTAMP_ENABLE")));
+        hyperscalerModel.setRetention(Integer.valueOf(configMap.get("HYPERSCALER_BACKUP_RETENTION")));
         
         return hyperscalerModel;
     }

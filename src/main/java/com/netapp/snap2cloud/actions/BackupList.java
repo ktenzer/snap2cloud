@@ -3,29 +3,16 @@ package com.netapp.snap2cloud.actions;
 import java.util.List;
 
 import com.amazonaws.auth.AWSCredentials;
-import com.netapp.snap2cloud.model.Host;
 import com.netapp.snap2cloud.model.Hyperscaler;
 import com.netapp.snap2cloud.model.S3BackupModel;
-import com.netapp.snap2cloud.model.Storage;
 import com.netapp.snap2cloud.services.aws.AwsConn;
 import com.netapp.snap2cloud.services.aws.S3BackupList;
-import com.netapp.snap2cloud.services.netapp.cdot.CdotApi;
-import com.netapp.snap2cloud.services.netapp.cdot.NtapConnModel;
 
 public class BackupList {
-
-    NtapConnModel connection;
-    Storage storage;
-    Host host;
     Hyperscaler hyperscaler;
-    CdotApi cdotApi;
     
-    public BackupList(NtapConnModel connection, Storage storage, Host host, Hyperscaler hyperscaler) {
-        this.connection = connection;
-        this.storage = storage;
-        this.host = host;
+    public BackupList(Hyperscaler hyperscaler) {
         this.hyperscaler = hyperscaler;
-        this.cdotApi = new CdotApi(storage.getSvm(), connection);
     }
     
     public void list() throws Exception {

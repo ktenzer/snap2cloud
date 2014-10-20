@@ -16,8 +16,11 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
 
@@ -97,5 +100,45 @@ public class S3Util {
         String formattedDate = sdf.format(date);
 
         return formattedDate;
+    }
+    
+    public boolean existsS3Object(String bucket, String key) {
+        ObjectListing list = s3.listObjects(bucket, key);
+        return list.getObjectSummaries().size() > 0;
+    }
+    
+    public void deleteS3Backup(String backupName, String bucketName) throws AmazonClientException {
+        String backupMetadataFileName = "snapshots/" + backupName + ".snapshot";
+
+        ObjectListing objectList = null;
+        do {
+            ListObjectsRequest listObjectsRequest = new ListObjectsRequest().withBucketName(bucketName).withPrefix(backupName);
+
+            objectList = s3.listObjects(listObjectsRequest);
+            ;
+
+            if (this.existsS3Object(bucketName, backupMetadataFileName)) {
+                s3.deleteObject(bucketName, backupMetadataFileName);
+            }
+
+            if (objectList.getObjectSummaries().isEmpty()) {
+                LOGGER.warn(String.format("S3 backup " + backupName + " for bucket " + bucketName + " does not exist"));
+            }
+
+            for (S3ObjectSummary summary : objectList.getObjectSummaries()) {
+                try {
+                    LOGGER.debug(String.format("Deleting object " + summary.getKey()));
+                    s3.deleteObject(bucketName, summary.getKey());
+                } catch (AmazonClientException e) {
+                    LOGGER.error(String.format("Delete of object " + summary.getKey() + " failed"));
+                    LOGGER.error(String.format("S3 backup delete of " + backupName + " failed"));
+                    throw new AmazonClientException(e.getMessage(), e);
+                }
+                LOGGER.debug(String.format("S3 object delete for " + summary.getKey() + " completed successfully"));
+            }
+            listObjectsRequest.setMarker(objectList.getNextMarker());
+        } while (objectList.isTruncated());
+
+        LOGGER.info(String.format("S3 backup delete for " + backupName + " completed successfully"));
     }
 }
