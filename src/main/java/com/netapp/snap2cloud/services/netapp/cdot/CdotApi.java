@@ -1,6 +1,10 @@
 package com.netapp.snap2cloud.services.netapp.cdot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +46,7 @@ public class CdotApi {
         try {
             SnapshotInfo snapshotInfo = new SnapshotInfo();
             snapshotInfo.setVserver(svm);
+            snapshotInfo.setVolume(volume);
 
             SnapshotGetIterRequest snapshotGetIterRequest = new SnapshotGetIterRequest();
             snapshotGetIterRequest.withQuery(snapshotInfo);
@@ -54,6 +59,18 @@ public class CdotApi {
             LOGGER.info("NetApp snapshot list of volume " + volume + " failed");
             throw new Exception(e.getMessage(), e);
         }
+    }
+    
+    public SnapshotInfo getLatestSnapshot(String volume) throws Exception {
+        List<SnapshotInfo> snapshotList = this.getSnapshots(volume);
+        
+        TreeMap<Long, SnapshotInfo> sortedSnapshots = new TreeMap<Long, SnapshotInfo>();
+        for (SnapshotInfo snapshot : snapshotList) {
+            long epoch = this.getEpoch(snapshot.getAccessTime().toString());
+            sortedSnapshots.put(epoch, snapshot);
+        }
+
+        return sortedSnapshots.get(sortedSnapshots.lastKey());
     }
     
     public void deleteSnapshot(String volume, String snapshot) throws Exception{
@@ -352,5 +369,18 @@ public class CdotApi {
         }      
         
         return isOnline;
+    }
+    
+    public long getEpoch(String date) throws Exception {
+        SimpleDateFormat df = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy");
+        
+        Date parsedDate;
+        try {
+            parsedDate = df.parse(date);
+        } catch (ParseException e) {
+            throw new Exception(e.getMessage(), e);
+        }
+        
+        return parsedDate.getTime();
     }
 }

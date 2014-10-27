@@ -11,6 +11,7 @@ public class Storage {
     private String volumeName;
     private String volumeCloneName;
     private String snapshotName;
+    private boolean latestSnapshot;
     
     public String getSvm() {
         return svm;
@@ -82,6 +83,14 @@ public class Storage {
 
     public void setSecure(boolean secure) {
         this.secure = secure;
+    }
+
+    public boolean isLatestSnapshot() {
+        return latestSnapshot;
+    }
+
+    public void setLatestSnapshot(boolean latestSnapshot) {
+        this.latestSnapshot = latestSnapshot;
     }
 
 }

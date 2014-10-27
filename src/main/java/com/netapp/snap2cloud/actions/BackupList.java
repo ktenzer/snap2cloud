@@ -21,9 +21,10 @@ public class BackupList {
             AWSCredentials credentials = aws.getAwsCredentialsFromEnvironment();
             S3BackupList s3BackupList = new S3BackupList(hyperscaler.getS3BucketName(), credentials);        
             List<S3BackupModel> backups = s3BackupList.backupList();
-            System.out.println("S3 Backup List");
+            System.out.println("##### S3 Backup List #####");
+            System.out.printf("%-45s%-45s%-23s%n", "### Snapshot ###", "### Path ###", "### Date ###");
             for (S3BackupModel backup : backups) {
-                System.out.println(backup.getBackupName() + " " + backup.getBackupPath() + " " + backup.getDate());
+                System.out.printf("%-45s%-45s%-23s%n", backup.getBackupName(), backup.getBackupPath(), backup.getDate());
             }
         } catch (Exception e) {
             throw new Exception(e.getMessage(), e);

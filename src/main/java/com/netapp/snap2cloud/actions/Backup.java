@@ -32,6 +32,12 @@ public class Backup {
     public void backupExistingSnapshot() throws Exception {
         try {         
             CdotApi cdotApi = new CdotApi(storage.getSvm(), connection);
+            
+            //use latest snapshot name if set
+            if (storage.isLatestSnapshot()) {
+                storage.setSnapshotName(cdotApi.getLatestSnapshot(storage.getVolumeName()).getName());
+            }
+            
             cdotApi.cloneVolumeFromSnapshot(storage.getVolumeName(), storage.getSnapshotName(), storage.getVolumeCloneName());
             cdotApi.exportVolume(storage.getSvm(), storage.getVolumeCloneName(), host.getExportPolicyName(), host.getExportHostorNetwork(), host.getExportPermission());
             

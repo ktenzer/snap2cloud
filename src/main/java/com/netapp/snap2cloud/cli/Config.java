@@ -38,6 +38,7 @@ public class Config {
         storageModel.setSvm(configMap.get("NTAP_SVM"));
         storageModel.setVolumeName(configMap.get("NTAP_VOLUME_NAME"));
         storageModel.setVolumeCloneName(configMap.get("NTAP_VOLUME_CLONE_NAME"));
+        storageModel.setLatestSnapshot(Boolean.valueOf(configMap.get("NTAP_USE_LATEST_SNAPSHOT")));
         
         return storageModel;
     }

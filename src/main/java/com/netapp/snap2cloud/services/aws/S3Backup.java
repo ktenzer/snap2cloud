@@ -60,8 +60,9 @@ public class S3Backup {
         }
 
         File file = new File(mountPath);
+        mountPath = mountPath + "/" + backupName;
 
-        LOGGER.info("Uploading directory " + file.getAbsolutePath() +" to Amazon S3 bucket " + bucketName +" in " + mountPath);
+        LOGGER.info("Uploading directory " + mountPath +" to Amazon S3 bucket " + bucketName);
         try {
             ObjectMetadataProvider metadataProvider = new ObjectMetadataProvider() {
                 public void provideObjectMetadata(File file, ObjectMetadata metadata) {
