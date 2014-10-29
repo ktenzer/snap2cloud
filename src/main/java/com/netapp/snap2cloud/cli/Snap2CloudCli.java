@@ -7,6 +7,8 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.netapp.snap2cloud.actions.Backup;
 import com.netapp.snap2cloud.actions.BackupList;
@@ -19,6 +21,8 @@ import com.netapp.snap2cloud.services.netapp.cdot.NtapConnModel;
 
 public class Snap2CloudCli {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(Snap2CloudCli.class);
+    
     public static void main(String [] args) {
         try {
             usePosixParser(args);
@@ -27,25 +31,24 @@ public class Snap2CloudCli {
         }
     }
     
-    private static void usePosixParser(final String[] commandLineArguments) {
+    private static void usePosixParser(final String[] commandLineArguments) throws Exception {
         
         final CliOptions cliOptions = new CliOptions();
         final CommandLineParser cmdLinePosixParser = new PosixParser();
         final Options posixOptions = cliOptions.getOptions();
         
         CommandLine commandLine;
-        boolean isParameters = true;
         try {
             commandLine = cmdLinePosixParser.parse(posixOptions, commandLineArguments);
             
             if (! commandLine.hasOption("config")) {
-                System.out.println("Missing argument: config");
-                isParameters = false;
+                LOGGER.error("Missing argument: config");
+                printHelp();
             }
             
             if (! commandLine.hasOption("action")) {
-                System.out.println("Missing argument: action");
-                isParameters = false;
+                LOGGER.error("Missing argument: action");
+                printHelp();
             }
             
             Storage storage =null;
@@ -60,16 +63,15 @@ public class Snap2CloudCli {
                 hyperscaler = config.getHyperscalerDetails(configMap);
                 ntapConn = getConnection(storage);
             } catch (Exception e) {
-                System.err.println("Could not read configuration file - " + e.getMessage());
+                throw new Exception("ERROR: Could not read configuration file - " + e.getMessage(), e);
             }
             
             if (commandLine.getOptionValue("action").equals("backup")) {
-                try {
-             
+                try {           
                     Backup backup = new Backup(ntapConn, storage, host, hyperscaler);
                     backup.backupExistingSnapshot();
                 } catch (Exception e) {
-                    System.err.println(e.getMessage());
+                    throw new Exception(e.getMessage(), e);
                 }
                 
             } else if(commandLine.getOptionValue("action").equals("cleanup")) {
@@ -77,47 +79,44 @@ public class Snap2CloudCli {
                     Cleanup cleanup = new Cleanup(ntapConn, storage, host, hyperscaler);
                     cleanup.all();
                 } catch (Exception e) {
-                    System.err.println(e.getMessage());
+                    throw new Exception(e.getMessage(), e);
                 }
             } else if(commandLine.getOptionValue("action").equals("list")) {
                 try {
                     BackupList backupList = new BackupList(hyperscaler);
                     backupList.list();
                 } catch (Exception e) {
-                    System.err.println(e.getMessage());
+                    throw new Exception(e.getMessage(), e);
                 }       
             } else if(commandLine.getOptionValue("action").equals("deleteBackup")) {
                 try {
                     DeleteBackup deleteBackup = new DeleteBackup(storage, hyperscaler);
                     deleteBackup.deleteBackup();
                 } catch (Exception e) {
-                    System.err.println(e.getMessage());
+                    throw new Exception(e.getMessage(), e);
                 }
             } else if(commandLine.getOptionValue("action").equals("deleteOnRetention")) {
                 try {
                     DeleteBackup deleteBackup = new DeleteBackup(storage, hyperscaler);
                     deleteBackup.deleteOnRetention();
                 } catch (Exception e) {
-                    System.err.println(e.getMessage());
+                    throw new Exception(e.getMessage(), e);
                 }                   
             } else {
-                System.err.println("Invalid action");
+                throw new Exception("Invalid argument");
             }
         } catch (ParseException parseException) {
-            System.err.println("Encountered exception while parsing using PosixParser:\n" + parseException.getMessage());
+            throw new Exception("ERROR: Encountered exception while parsing using PosixParser:\n" + parseException.getMessage(), parseException);
         }
         
-        if (!isParameters) {
-            printHelp();
-        }
+        LOGGER.info("Snap2cloud completed successfully");
+        System.exit(0);
     }
 
     private static void printHelp() {
-        String applicationName = "snap2cloud";
         final CliOptions cliOptions = new CliOptions();
-        
-        System.out.println(System.lineSeparator());
-        CliHelp.printUsage(applicationName, cliOptions.getOptions(), System.out);
+
+        CliHelp.printUsage(cliOptions.getOptions());
     }
 
     private static NtapConnModel getConnection(Storage storage) {

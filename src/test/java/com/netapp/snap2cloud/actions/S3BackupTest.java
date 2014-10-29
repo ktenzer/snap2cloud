@@ -16,11 +16,13 @@ public class S3BackupTest {
     @Test
     public void testExecute() {
         try {
+            /*
             AwsConn aws = new AwsConn();
             AWSCredentials credentials = aws.getAwsCredentialsFromEnvironment();
             S3Backup s3Backup = new S3Backup(mountPath, bucketName, backupName, false, credentials);
             
-            s3Backup.backup();           
+            s3Backup.backup(); 
+            */          
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();

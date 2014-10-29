@@ -57,7 +57,7 @@ public class Backup {
             
             cmd.executeCmd(cmd2Args);
             
-            cdotApi.deleteVolume(storage.getVolumeCloneName());
+            cdotApi.deleteVolume(storage.getVolumeCloneName());           
         } catch (Exception e) {
             throw new Exception(e.getMessage(), e);
         }

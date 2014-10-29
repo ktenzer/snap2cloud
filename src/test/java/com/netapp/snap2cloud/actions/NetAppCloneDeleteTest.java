@@ -12,10 +12,10 @@ public class NetAppCloneDeleteTest {
     @Test
     public void testExecute() {
         try {
-            NtapCdotTestSuite cdotTestSuite = new NtapCdotTestSuite();
-            NtapConnModel connection = cdotTestSuite.getConnectionSpec();
-            CdotApi cdotApi = new CdotApi(cdotTestSuite.SVM, connection);
-            cdotApi.deleteVolume(clone);
+            //NtapCdotTestSuite cdotTestSuite = new NtapCdotTestSuite();
+            //NtapConnModel connection = cdotTestSuite.getConnectionSpec();
+            //CdotApi cdotApi = new CdotApi(cdotTestSuite.SVM, connection);
+            //cdotApi.deleteVolume(clone);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();

@@ -80,7 +80,7 @@ public class S3Backup {
                 long xferProgress = uploadDirectory.getProgress().getBytesTransferred();
                 String xferState = uploadDirectory.getState().toString();
 
-                LOGGER.info("Upload status for " + file.getAbsolutePath() + " in S3 Bucket " + bucketName + " state: " + xferState + " percent: " + percent + " progress: " + xferProgress); 
+                LOGGER.info("Upload status for " + file.getAbsolutePath() + " in S3 Bucket " + bucketName + " state: " + xferState + " percent: " + percent + " progress: " + xferProgress + " bytes"); 
 
                 ExecuteCommand cmd = new ExecuteCommand();
                 cmd.sleep(10);
