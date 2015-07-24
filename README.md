@@ -1,7 +1,7 @@
 snap2cloud
 ==========
 
-Vault a NetApp snapshot to the cloud
+Vault a NetApp snapshot to the public cloud 
 
 Requirements
 ==========
